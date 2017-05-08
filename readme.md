@@ -13,6 +13,9 @@ Response:
 `{"success":true,"response":"http://localhost:8080/p"}`
 
 Redirect\
+Open url in your browser [http://localhost:8080/p](http://localhost:8080/p)
+
+OR\
 `curl http://localhost:8080/p  `
 
 Get info for url shortener\
