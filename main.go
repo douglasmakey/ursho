@@ -13,7 +13,7 @@ func main() {
 	// Sets the maximum number of CPUs
 	runtime.GOMAXPROCS(runtime.NumCPU())
 
-	// Set use storage
+	// Set use storage, select [Postgres, Filesystem, Redis ...]
 	storage := &storages.Postgres{}
 
 	// Read config
