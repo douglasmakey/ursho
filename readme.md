@@ -22,7 +22,7 @@ Get info for url shortener\
 `curl http://localhost:8080/info/p  `
 
 Response:
-```
+```json
 {
  "success":true,
  "response": {
@@ -49,7 +49,7 @@ select the method of persistence, in which you going to work.\
 `storage := &storages.Postgres{}`
 
 Add your config for the method of persistence and other options in file config.json\
-```
+```json
 {
   "server": {
     "host": "0.0.0.0",
