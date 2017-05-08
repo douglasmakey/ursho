@@ -1,6 +1,6 @@
 ## Synopsis
 
-..
+#### URL Shortener Service
 
 ## Code Example
 
