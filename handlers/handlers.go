@@ -3,7 +3,7 @@ package handlers
 
 import (
 	"encoding/json"
-	"github.com/douglasmakaey/ursho/storages"
+	"github.com/douglasmakey/ursho/storages"
 	"net/http"
 )
 

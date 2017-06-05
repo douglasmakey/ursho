@@ -3,10 +3,10 @@ package storages
 import (
 	"database/sql"
 	"fmt"
-	"github.com/douglasmakaey/ursho/config"
+	"github.com/douglasmakey/ursho/config"
 	_ "github.com/lib/pq"
 
-	"github.com/douglasmakaey/ursho/enconding"
+	"github.com/douglasmakey/ursho/enconding"
 )
 
 type Postgres struct {

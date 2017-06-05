@@ -4,9 +4,9 @@ import (
 	"log"
 	"net/http"
 	"runtime"
-	"github.com/douglasmakaey/ursho/handlers"
-	"github.com/douglasmakaey/ursho/storages"
-	"github.com/douglasmakaey/ursho/config"
+	"github.com/douglasmakey/ursho/handlers"
+	"github.com/douglasmakey/ursho/storages"
+	"github.com/douglasmakey/ursho/config"
 )
 
 func main() {

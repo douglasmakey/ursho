@@ -2,7 +2,7 @@ package handlers
 
 import (
 	"encoding/json"
-	"github.com/douglasmakaey/ursho/config"
+	"github.com/douglasmakey/ursho/config"
 	"log"
 )
 
