@@ -1,0 +1,3 @@
+package: github.com/douglasmakaey/ursho
+import:
+- package: github.com/lib/pq
