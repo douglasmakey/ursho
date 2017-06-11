@@ -2,7 +2,6 @@ package config
 
 import (
 	"encoding/json"
-	"fmt"
 	"io/ioutil"
 )
 
@@ -43,11 +42,13 @@ type Options struct {
 func ReadConfig() (Config, error) {
 	file, e := ioutil.ReadFile("./config/config.json")
 	if e != nil {
-		fmt.Printf("File error: %v\n", e)
 		return Config{}, e
 	}
 
 	var objectConfig Config
-	json.Unmarshal(file, &objectConfig)
+	if err := json.Unmarshal(file, &objectConfig); err != nil {
+		return Config{}, err
+	}
+
 	return objectConfig, nil
 }

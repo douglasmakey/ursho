@@ -3,6 +3,7 @@ package storages
 import (
 	"database/sql"
 	"fmt"
+
 	"github.com/douglasmakey/ursho/config"
 	_ "github.com/lib/pq"
 

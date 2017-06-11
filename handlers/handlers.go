@@ -3,8 +3,10 @@ package handlers
 
 import (
 	"encoding/json"
-	"github.com/douglasmakey/ursho/storages"
 	"net/http"
+	"strings"
+
+	"github.com/douglasmakey/ursho/storages"
 )
 
 type bodyRequest struct {
@@ -14,16 +16,26 @@ type bodyRequest struct {
 func EncodeHandler(storage storages.IFStorage) http.Handler {
 	handleFunc := func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
-		decoder := json.NewDecoder(r.Body)
+
 		var b bodyRequest
-		decoder.Decode(&b)
-		if len(b.URL) == 0 {
+		if err := json.NewDecoder(r.Body).Decode(&b); err != nil {
+			w.WriteHeader(http.StatusInternalServerError)
+			e := Error{Data: "Unable to decode JSON request body: " + err.Error(), Success: false}
+			d := createError(e)
+			w.Write(d)
+			return
+		}
+
+		b.URL = strings.TrimSpace(b.URL)
+
+		if b.URL == "" {
 			w.WriteHeader(http.StatusBadRequest)
 			e := Error{Data: "URL is Empty", Success: false}
 			d := createError(e)
 			w.Write(d)
 			return
 		}
+
 		c, err := storage.Save(b.URL)
 		if err != nil {
 			w.WriteHeader(http.StatusBadRequest)
@@ -32,6 +44,7 @@ func EncodeHandler(storage storages.IFStorage) http.Handler {
 			w.Write(d)
 			return
 		}
+
 		response := Response{Data: prefix + c, Success: true}
 		d := createResponse(response)
 		w.Write(d)
@@ -44,6 +57,7 @@ func DecodeHandler(storage storages.IFStorage) http.Handler {
 	handleFunc := func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
 		code := r.URL.Path[len("/info/"):]
+
 		model, err := storage.LoadInfo(code)
 		if err != nil {
 			w.WriteHeader(http.StatusNotFound)
