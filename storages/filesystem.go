@@ -18,7 +18,7 @@ type Filesystem struct {
 	model Model
 }
 
-func (s *Filesystem) Init(config config.Config) error {
+func (s *Filesystem) Init(config *config.Config) error {
 	// Validate Path if not empty
 	if config.Filesystem.Path == "" {
 		return errors.New("Filesystem fail config")
@@ -53,12 +53,12 @@ func (s *Filesystem) Save(url string) (string, error) {
 	return code, nil
 }
 
-func (s *Filesystem) Load(code string) (Model, error) {
+func (s *Filesystem) Load(code string) (*Model, error) {
 
 	s.Lock()
 	urlBytes, err := ioutil.ReadFile(filepath.Join(s.Root, code))
 	if err != nil {
-		return Model{}, err
+		return nil, err
 	}
 	s.Unlock()
 
@@ -74,17 +74,17 @@ func (s *Filesystem) Load(code string) (Model, error) {
 	}
 	s.Unlock()
 
-	return s.model, nil
+	return &s.model, nil
 }
 
-func (s *Filesystem) LoadInfo(code string) (Model, error) {
+func (s *Filesystem) LoadInfo(code string) (*Model, error) {
 	s.Lock()
 	urlBytes, err := ioutil.ReadFile(filepath.Join(s.Root, code))
 	s.Unlock()
 
 	json.Unmarshal(urlBytes, &s.model)
 
-	return s.model, err
+	return &s.model, err
 }
 
 func (s *Filesystem) Close() {

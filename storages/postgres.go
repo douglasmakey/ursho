@@ -56,7 +56,7 @@ func (p *Postgres) Save(url string) (string, error) {
 	return enconding.Encode(lastInsertId), nil
 }
 
-func (p *Postgres) Load(code string) (Model, error) {
+func (p *Postgres) Load(code string) (*Model, error) {
 	// Decode code
 	decodeID := enconding.Decode(code)
 
@@ -64,19 +64,19 @@ func (p *Postgres) Load(code string) (Model, error) {
 	err := p.DB.QueryRow("SELECT url, visited, count FROM shortener where uid=$1 limit 1",
 		decodeID).Scan(&p.model.Url, &p.model.Visited, &p.model.Count)
 	if err != nil {
-		return Model{}, err
+		return nil, err
 	}
 
 	// Query update
 	stmt, err := p.DB.Prepare("update shortener set visited=$1, count=$2 where uid=$3")
 	if err != nil {
-		return Model{}, err
+		return nil, err
 	}
 	_, err = stmt.Exec(true, p.model.Count+1, decodeID)
-	return p.model, err
+	return &p.model, err
 }
 
-func (p *Postgres) LoadInfo(code string) (Model, error) {
+func (p *Postgres) LoadInfo(code string) (*Model, error) {
 	// Decode code
 	decodeID := enconding.Decode(code)
 
@@ -84,10 +84,10 @@ func (p *Postgres) LoadInfo(code string) (Model, error) {
 	err := p.DB.QueryRow("SELECT url, visited, count FROM shortener where uid=$1 limit 1",
 		decodeID).Scan(&p.model.Url, &p.model.Visited, &p.model.Count)
 	if err != nil {
-		return Model{}, err
+		return nil, err
 	}
 
-	return p.model, err
+	return &p.model, err
 }
 
 func (p *Postgres) Close() {
