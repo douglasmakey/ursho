@@ -15,7 +15,7 @@ type Postgres struct {
 	model Model
 }
 
-func (p *Postgres) Init(config config.Config) error {
+func (p *Postgres) Init(config *config.Config) error {
 	// Coonect postgres
 	strConnect := fmt.Sprintf("user=%s password=%s dbname=%s sslmode=disable",
 		config.Postgres.User, config.Postgres.Password, config.Postgres.DB)

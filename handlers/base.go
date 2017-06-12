@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"github.com/douglasmakey/ursho/config"
 	"log"
+	"net/http"
 )
 
 type Response struct {
@@ -11,10 +12,6 @@ type Response struct {
 	Data    interface{} `json:"response"`
 }
 
-type Error struct {
-	Data    interface{} `json:"error"`
-	Success bool        `json:"success"`
-}
 
 var prefix string
 
@@ -31,19 +28,12 @@ func init() {
 	}
 }
 
-func createError(e Error) []byte {
-	d, err := json.Marshal(e)
-	if err != nil {
-		panic(err)
-	}
-	return d
-}
 
-func createResponse(r Response) []byte {
+func createResponse(w http.ResponseWriter, r Response) {
 	d, err := json.Marshal(r)
 	if err != nil {
 		panic(err)
 	}
 
-	return d
+	w.Write(d)
 }

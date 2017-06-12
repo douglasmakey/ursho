@@ -39,15 +39,15 @@ type Options struct {
 	Prefix string `json:"prefix"`
 }
 
-func ReadConfig() (Config, error) {
+func ReadConfig() (*Config, error) {
 	file, e := ioutil.ReadFile("./config/config.json")
 	if e != nil {
-		return Config{}, e
+		return nil, e
 	}
 
-	var objectConfig Config
+	var objectConfig *Config
 	if err := json.Unmarshal(file, &objectConfig); err != nil {
-		return Config{}, err
+		return nil, err
 	}
 
 	return objectConfig, nil

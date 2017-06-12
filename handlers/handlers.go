@@ -22,9 +22,8 @@ func EncodeHandler(storage storages.IFStorage) http.Handler {
 			var b bodyRequest
 			if err := json.NewDecoder(r.Body).Decode(&b); err != nil {
 				w.WriteHeader(http.StatusInternalServerError)
-				e := Error{Data: "Unable to decode JSON request body: " + err.Error(), Success: false}
-				d := createError(e)
-				w.Write(d)
+				e := Response{Data: "Unable to decode JSON request body: " + err.Error(), Success: false}
+				createResponse(w, e)
 				return
 			}
 
@@ -32,24 +31,21 @@ func EncodeHandler(storage storages.IFStorage) http.Handler {
 
 			if b.URL == "" {
 				w.WriteHeader(http.StatusBadRequest)
-				e := Error{Data: "URL is Empty", Success: false}
-				d := createError(e)
-				w.Write(d)
+				e := Response{Data: "URL is Empty", Success: false}
+				createResponse(w, e)
 				return
 			}
 
 			c, err := storage.Save(b.URL)
 			if err != nil {
 				w.WriteHeader(http.StatusBadRequest)
-				e := Error{Data: err.Error(), Success: false}
-				d := createError(e)
-				w.Write(d)
+				e := Response{Data: err.Error(), Success: false}
+				createResponse(w, e)
 				return
 			}
 
 			response := Response{Data: prefix + c, Success: true}
-			d := createResponse(response)
-			w.Write(d)
+			createResponse(w, response)
 
 		} else {
 			w.WriteHeader(http.StatusMethodNotAllowed)
@@ -69,15 +65,13 @@ func DecodeHandler(storage storages.IFStorage) http.Handler {
 			model, err := storage.LoadInfo(code)
 			if err != nil {
 				w.WriteHeader(http.StatusNotFound)
-				e := Error{Data: "URL Not Found", Success: false}
-				d := createError(e)
-				w.Write(d)
+				e := Response{Data: "URL Not Found", Success: false}
+				createResponse(w, e)
 				return
 			}
 
 			response := Response{Data: model, Success: true}
-			d := createResponse(response)
-			w.Write(d)
+			createResponse(w, response)
 
 		} else {
 
