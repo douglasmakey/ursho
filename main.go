@@ -70,8 +70,8 @@ func main() {
 			log.Println("Unable to shut down server: " + err.Error())
 			close <- true
 		} else {
-			close <- true
 			log.Println("Server stopped")
+			close <- true
 		}
 	}()
 
