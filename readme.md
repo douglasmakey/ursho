@@ -4,6 +4,11 @@
 
 ## Code Example
 
+```
+# execute the program
+go run main.go
+```
+
 Using CURL
 
 Generate shortener\
@@ -39,6 +44,17 @@ Response:
 
 ## Installation
 
+You can install it using 'go get' or cloning the repository.
+
+#### Use go get
+```
+# fetches the program
+go get github.com/douglasmakey/ursho
+
+# move to the app's directory
+cd $GOPATH/src/github.com/douglasmakey/ursho
+```
+#### Cloning the repo
 We'll use github.com/user as our base path. Create a directory inside your workspace in which to keep source code:
 
 ***mkdir -p $GOPATH/src/github.com/douglasmakey cd "$_"***
@@ -53,13 +69,15 @@ https://github.com/Masterminds/glide
 
 Run `glide install` in the folder.
 
+#### Select method of persistence
+select the method of persistence, in which you going to work.\
+`storage := &storages.Postgres{}`
+
 If selected Postgresql as Storage, create database
 ```sql
 CREATE DATABASE ursho_db;
 ```
 
-select the method of persistence, in which you going to work.\
-`storage := &storages.Postgres{}`
 
 Add your config for the method of persistence and other options in file config.json\
 ```json
