@@ -2,7 +2,10 @@ package config
 
 import (
 	"encoding/json"
-	"io/ioutil"
+	"os"
+	"bufio"
+	"io"
+	"fmt"
 )
 
 type Config struct {
@@ -40,14 +43,41 @@ type Options struct {
 }
 
 func ReadConfig() (*Config, error) {
-	file, e := ioutil.ReadFile("./config/config.json")
-	if e != nil {
-		return nil, e
+	var objectConfig *Config
+
+	// open input file
+	file, err := os.Open("./config/config.json")
+	if err != nil {
+		panic(err)
 	}
 
-	var objectConfig *Config
-	if err := json.Unmarshal(file, &objectConfig); err != nil {
-		return nil, err
+	// close file on exit and check for its returned error
+	defer func() {
+		if err := file.Close(); err != nil {
+			panic(err)
+		}
+	}()
+
+	// make a read buffer
+	r := bufio.NewReader(file)
+
+	// make a buffer to keep chunks that are read
+	buf := make([]byte, 1024)
+
+	for {
+		// read a chunk
+		n, err := r.Read(buf)
+		if err != nil && err != io.EOF {
+			panic(err)
+		}
+		if n == 0 {
+			break
+		}
+		// Unmarshal data
+		if err := json.Unmarshal(buf[:n], &objectConfig); err != nil {
+			return nil, err
+		}
+
 	}
 
 	return objectConfig, nil
