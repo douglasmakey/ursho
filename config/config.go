@@ -5,7 +5,6 @@ import (
 	"os"
 	"bufio"
 	"io"
-	"fmt"
 )
 
 type Config struct {
