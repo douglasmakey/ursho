@@ -15,16 +15,16 @@ Generate shortener\
 `curl -H "Content-Type: application/json" -X POST -d '{"url":"www.google.com"}' http://localhost:8080/encode/`
 
 Response:
-`{"success":true,"response":"http://localhost:8080/1"}`
+`{"success":true,"response":"http://localhost:8080/bN"}`
 
 Redirect\
 Open url in your browser [http://localhost:8080/1](http://localhost:8080/p)
 
 OR\
-`curl http://localhost:8080/1  `
+`curl http://localhost:8080/bN
 
 Get info for url shortener\
-`curl http://localhost:8080/info/1 `
+`curl http://localhost:8080/info/bN `
 
 Response:
 ```json
