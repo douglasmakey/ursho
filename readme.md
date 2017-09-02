@@ -18,7 +18,7 @@ Response:
 `{"success":true,"response":"http://localhost:8080/bN"}`
 
 Redirect\
-Open url in your browser [http://localhost:8080/1](http://localhost:8080/p)
+Open url in your browser [http://localhost:8080/bN](http://localhost:8080/bN)
 
 OR\
 `curl http://localhost:8080/bN
