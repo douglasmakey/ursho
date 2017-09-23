@@ -13,7 +13,7 @@ type bodyRequest struct {
 	URL string
 }
 
-func EncodeHandler(storage storages.IFStorage) http.Handler {
+func EncodeHandler(prefix string, storage storages.IFStorage) http.Handler {
 	handleFunc := func(w http.ResponseWriter, r *http.Request) {
 		if r.Method == http.MethodPost {
 

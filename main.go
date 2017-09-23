@@ -36,7 +36,7 @@ func main() {
 	defer storage.Close()
 
 	// Handlers
-	http.Handle("/encode/", handlers.EncodeHandler(storage))
+	http.Handle("/encode/", handlers.EncodeHandler(config.Options.Prefix, storage))
 	http.Handle("/", handlers.RedirectHandler(storage))
 	http.Handle("/info/", handlers.DecodeHandler(storage))
 
