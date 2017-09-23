@@ -35,12 +35,8 @@ func main() {
 	// Defers
 	defer storage.Close()
 
-	// Handlers
-	http.Handle("/encode/", handlers.EncodeHandler(config.Options.Prefix, storage))
-	http.Handle("/", handlers.RedirectHandler(storage))
-	http.Handle("/info/", handlers.DecodeHandler(storage))
-
 	// Create a server
+	http.Handle("/", handlers.New(config.Options.Prefix, storage))
 	server := &http.Server{Addr: fmt.Sprintf("%s:%s", config.Server.Host, config.Server.Port)}
 
 	// Check for a closing signal
