@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"flag"
 	"fmt"
 	"log"
 	"net/http"
@@ -14,11 +15,15 @@ import (
 )
 
 func main() {
+	configPath := flag.String("config", "./config/config.json", "path of the config file")
+
+	flag.Parse()
+
 	// Set use storage, select [Postgres, Filesystem, Redis ...]
 	storage := &storages.Postgres{}
 
 	// Read config
-	config, err := config.ReadConfig()
+	config, err := config.FromFile(*configPath)
 	if err != nil {
 		log.Fatal(err)
 	}
