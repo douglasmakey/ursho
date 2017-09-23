@@ -1,4 +1,4 @@
-package storages
+package storage
 
 type IFStorage interface {
 	Save(string) (string, error)

@@ -10,8 +10,8 @@ import (
 	"os/signal"
 
 	"github.com/douglasmakey/ursho/config"
-	"github.com/douglasmakey/ursho/handlers"
-	"github.com/douglasmakey/ursho/storages"
+	"github.com/douglasmakey/ursho/handler"
+	"github.com/douglasmakey/ursho/storage"
 )
 
 func main() {
@@ -20,7 +20,7 @@ func main() {
 	flag.Parse()
 
 	// Set use storage, select [Postgres, Filesystem, Redis ...]
-	storage := &storages.Postgres{}
+	storage := &storage.Postgres{}
 
 	// Read config
 	config, err := config.FromFile(*configPath)
@@ -36,7 +36,7 @@ func main() {
 	defer storage.Close()
 
 	// Create a server
-	http.Handle("/", handlers.New(config.Options.Prefix, storage))
+	http.Handle("/", handler.New(config.Options.Prefix, storage))
 	server := &http.Server{Addr: fmt.Sprintf("%s:%s", config.Server.Host, config.Server.Port)}
 
 	// Check for a closing signal

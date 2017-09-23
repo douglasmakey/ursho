@@ -1,5 +1,5 @@
 // Package handlers provides HTTP request handlers.
-package handlers
+package handler
 
 import (
 	"encoding/json"
@@ -9,11 +9,11 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/douglasmakey/ursho/storages"
+	"github.com/douglasmakey/ursho/storage"
 )
 
 // New returns an http handler for the url shortener.
-func New(prefix string, storage storages.IFStorage) http.Handler {
+func New(prefix string, storage storage.IFStorage) http.Handler {
 	mux := http.NewServeMux()
 	h := handler{prefix, storage}
 	mux.HandleFunc("/encode/", responseHandler(h.encode))
@@ -29,7 +29,7 @@ type response struct {
 
 type handler struct {
 	prefix  string
-	storage storages.IFStorage
+	storage storage.IFStorage
 }
 
 func responseHandler(h func(io.Writer, *http.Request) (interface{}, int, error)) http.HandlerFunc {
