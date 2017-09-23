@@ -11,7 +11,7 @@ import (
 
 	"github.com/douglasmakey/ursho/config"
 	"github.com/douglasmakey/ursho/handler"
-	"github.com/douglasmakey/ursho/storage"
+	"github.com/douglasmakey/ursho/storage/postgres"
 )
 
 func main() {
@@ -19,24 +19,21 @@ func main() {
 
 	flag.Parse()
 
-	// Set use storage, select [Postgres, Filesystem, Redis ...]
-	storage := &storage.Postgres{}
-
 	// Read config
 	config, err := config.FromFile(*configPath)
 	if err != nil {
 		log.Fatal(err)
 	}
-	// Init storage
-	if err = storage.Init(config); err != nil {
+
+	// Set use storage, select [Postgres, Filesystem, Redis ...]
+	svc, err := postgres.New(config.Postgres.User, config.Postgres.Password, config.Postgres.DB)
+	if err != nil {
 		log.Fatal(err)
 	}
-
-	// Defers
-	defer storage.Close()
+	defer svc.Close()
 
 	// Create a server
-	http.Handle("/", handler.New(config.Options.Prefix, storage))
+	http.Handle("/", handler.New(config.Options.Prefix, svc))
 	server := &http.Server{Addr: fmt.Sprintf("%s:%s", config.Server.Host, config.Server.Port)}
 
 	// Check for a closing signal

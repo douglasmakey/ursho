@@ -13,7 +13,7 @@ import (
 )
 
 // New returns an http handler for the url shortener.
-func New(prefix string, storage storage.IFStorage) http.Handler {
+func New(prefix string, storage storage.Service) http.Handler {
 	mux := http.NewServeMux()
 	h := handler{prefix, storage}
 	mux.HandleFunc("/encode/", responseHandler(h.encode))
@@ -29,7 +29,7 @@ type response struct {
 
 type handler struct {
 	prefix  string
-	storage storage.IFStorage
+	storage storage.Service
 }
 
 func responseHandler(h func(io.Writer, *http.Request) (interface{}, int, error)) http.HandlerFunc {
@@ -99,5 +99,5 @@ func (h handler) redirect(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	http.Redirect(w, r, string(model.Url), 301)
+	http.Redirect(w, r, string(model.URL), http.StatusMovedPermanently)
 }
