@@ -2,63 +2,42 @@ package config
 
 import (
 	"encoding/json"
-	"os"
-	"io"
-	"bytes"
+	"io/ioutil"
 )
 
+// Config contains the configuration of the url shortener.
 type Config struct {
-	Server     Server     `json:"server"`
-	Redis      Redis      `json:"redis"`
-	Postgres   Postgres   `json:"postgres"`
-	Options    Options    `json:"options"`
+	Server struct {
+		Host string `json:"host"`
+		Port string `json:"port"`
+	} `json:"server"`
+	Redis struct {
+		Host     string `json:"host"`
+		Password string `json:"password"`
+		DB       string `json:"db"`
+	} `json:"redis"`
+	Postgres struct {
+		Host     string `json:"host"`
+		User     string `json:"user"`
+		Password string `json:"password"`
+		DB       string `json:"db"`
+	} `json:"postgres"`
+	Options struct {
+		Prefix string `json:"prefix"`
+	} `json:"options"`
 }
 
-type Server struct {
-	Host string `json:"host"`
-	Port string `json:"port"`
-}
-
-type Redis struct {
-	Host     string `json:"host"`
-	Password string `json:"password"`
-	DB       string `json:"db"`
-}
-
-type Postgres struct {
-	Host     string `json:"host"`
-	User     string `json:"user"`
-	Password string `json:"password"`
-	DB       string `json:"db"`
-}
-
-type Options struct {
-	Prefix string `json:"prefix"`
-}
-
-func ReadConfig() (*Config, error) {
-	var objectConfig *Config
-	var buf bytes.Buffer
-
-	// open input file
-	file, err := os.Open("./config/config.json")
+// FromFile returns a configuration parsed from the given file.
+func FromFile(path string) (*Config, error) {
+	b, err := ioutil.ReadFile(path)
 	if err != nil {
 		return nil, err
 	}
 
-	// close file
-	defer file.Close()
-
-	// copy to buffer
-	_, err = io.Copy(&buf, file)
-	if err != nil {
+	var cfg Config
+	if err := json.Unmarshal(b, &cfg); err != nil {
 		return nil, err
 	}
 
-	// Unmarshal data
-	if err := json.Unmarshal(buf.Bytes(), &objectConfig); err != nil {
-		return nil, err
-	}
-
-	return objectConfig, nil
+	return &cfg, nil
 }
