@@ -22,6 +22,9 @@ type Config struct {
 		Password string `json:"password"`
 		DB       string `json:"db"`
 	} `json:"postgres"`
+	Sqlite struct {
+		FilePath string `json:"filepath"`
+	} `json:"sqlite"`
 	Options struct {
 		Prefix string `json:"prefix"`
 	} `json:"options"`
