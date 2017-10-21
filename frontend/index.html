@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>url shortener</title>
+  <meta name="viewport" content="width=device-width" />
+  <link
+      rel="stylesheet"
+      href="https://unpkg.com/material-components-web@latest/dist/material-components-web.min.css">
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body>
+
+<div class="container">
+  <div class="bar">
+
+    <div class="mdc-textfield mdc-textfield--upgraded">
+      <input type="text" id="my-textfield" class="urltochange mdc-textfield__input">
+      <label class="mdc-textfield__label mdc-textfield__label--float-above" for="my-textfield">
+        URL to shorten
+      </label>
+    </div>
+
+    <button type="submit" class="button">shorten</button>
+  </div>
+</div>
+<div class="resultUrl"></div>
+<style>
+
+html {
+  background: #e0e0e0;
+  background-size:cover;
+  font-family: 'Open Sans', sans-serif;
+  text-align: center;
+  font-size: 14px;
+}
+
+.container {
+  display: flex;
+  justify-content: center;
+  margin-top: 100px;
+}
+
+.mdc-textfield__input {
+  width: 280px;
+}
+
+button {
+  background: none;
+  border: 0;
+  cursor: pointer;
+  color: white;
+  font-size: 1.1rem;
+  text-transform: uppercase;
+  background: #2196f3;
+  border-bottom: 3px solid rgba(0, 0, 0, 0.2);
+  border-right: 1px solid rgba(0, 0, 0, 0.2);
+
+}
+
+.resultUrl {
+    margin-top: 20px;
+    font-size: 2rem;
+}
+
+.smallText {
+    font-size: 0.75rem;
+    color: #757575;
+}
+
+</style>
+<script>
+const inputField = document.querySelector('.urltochange');
+const shortenButton = document.querySelector('.button');
+const requestURL = "/encode/"
+const xhr = new XMLHttpRequest();
+const newUrl = document.querySelector('.resultUrl');
+
+function shorten() {
+    let urlToShorten = document.querySelector('.urltochange');
+    xhr.open("POST", requestURL, false);
+    xhr.setRequestHeader("Content-Type", "application/json");
+    xhr.send(JSON.stringify({url:urlToShorten.value}));
+    let respo = JSON.parse(xhr.responseText).response;
+    newUrl.innerHTML = respo;
+    let p = document.createElement("p");
+    document.querySelector('.resultUrl').appendChild(p);
+    p.setAttribute("class", "smallText")
+    p.innerHTML = "Click shortened UR to copy to clipboard";
+
+    const span = document.querySelector('.resultUrl');
+
+    span.onclick = function() {
+      document.execCommand("copy");
+    }
+
+
+    span.addEventListener("copy", function(event) {
+      event.preventDefault();
+      if (event.clipboardData) {
+        event.clipboardData.setData("text/plain", respo);
+      }
+    });
+
+}
+
+function clear(e){
+    this.value = " "
+}
+
+shortenButton.addEventListener('click', shorten);
+inputField.addEventListener('click', clear);
+
+</script>
+</body>
+</html>
