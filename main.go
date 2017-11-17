@@ -33,8 +33,10 @@ func main() {
 	defer svc.Close()
 
 	// Create a server
-	http.Handle("/", handler.New(config.Options.Prefix, svc))
-	server := &http.Server{Addr: fmt.Sprintf("%s:%s", config.Server.Host, config.Server.Port)}
+	server := &http.Server{
+		Addr: fmt.Sprintf("%s:%s", config.Server.Host, config.Server.Port),
+		Handler: handler.New(config.Options.Prefix, svc),
+		}
 
 	// Check for a closing signal
 	go func() {

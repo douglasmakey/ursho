@@ -13,7 +13,7 @@ import (
 
 // New returns a postgres backed storage service.
 func New(user, password, dbName string) (storage.Service, error) {
-	// Coonect postgres
+	// Connect postgres
 	connect := fmt.Sprintf("user=%s password=%s dbname=%s sslmode=disable",
 		user, password, dbName)
 	db, err := sql.Open("postgres", connect)
@@ -49,22 +49,18 @@ func (p *postgres) Save(url string) (string, error) {
 	return base62.Encode(id), nil
 }
 
-func (p *postgres) Load(code string) (*storage.Item, error) {
+func (p *postgres) Load(code string) (string, error) {
 	id, err := base62.Decode(code)
 	if err != nil {
-		return nil, err
+		return "", err
 	}
 
-	item, err := p.LoadInfo(code)
+	var url string
+	err = p.db.QueryRow("update shortener set visited=true, count = count + 1 where uid=$1 RETURNING url", id).Scan(&url)
 	if err != nil {
-		return nil, err
+		return "", err
 	}
-
-	_, err = p.db.Exec("update shortener set visited=$1, count=$2 where uid=$3", true, item.Count+1, id)
-	if err != nil {
-		return nil, err
-	}
-	return item, nil
+	return url, nil
 }
 
 func (p *postgres) LoadInfo(code string) (*storage.Item, error) {

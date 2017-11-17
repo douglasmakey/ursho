@@ -38,8 +38,8 @@ func responseHandler(h func(io.Writer, *http.Request) (interface{}, int, error))
 		if err != nil {
 			data = err.Error()
 		}
-		w.WriteHeader(status)
 		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(status)
 		err = json.NewEncoder(w).Encode(response{Data: data, Success: err == nil})
 		if err != nil {
 			log.Printf("could not encode response to output: %v", err)
@@ -64,7 +64,7 @@ func (h handler) encode(w io.Writer, r *http.Request) (interface{}, int, error) 
 
 	c, err := h.storage.Save(url)
 	if err != nil {
-		return nil, http.StatusBadRequest, fmt.Errorf("Could not store in database: %v", err)
+		return nil, http.StatusInternalServerError, fmt.Errorf("Could not store in database: %v", err)
 	}
 
 	return h.prefix + c, http.StatusCreated, nil
@@ -92,12 +92,12 @@ func (h handler) redirect(w http.ResponseWriter, r *http.Request) {
 	}
 	code := r.URL.Path[len("/"):]
 
-	model, err := h.storage.Load(code)
+	url, err := h.storage.Load(code)
 	if err != nil {
 		w.WriteHeader(http.StatusNotFound)
 		w.Write([]byte("URL Not Found"))
 		return
 	}
 
-	http.Redirect(w, r, string(model.URL), http.StatusMovedPermanently)
+	http.Redirect(w, r, string(url), http.StatusMovedPermanently)
 }
