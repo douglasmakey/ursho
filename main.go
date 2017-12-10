@@ -26,7 +26,7 @@ func main() {
 	}
 
 	// Set use storage, select [Postgres, Filesystem, Redis ...]
-	svc, err := postgres.New(config.Postgres.User, config.Postgres.Password, config.Postgres.DB)
+	svc, err := postgres.New(config.Postgres.Host, config.Postgres.Port, config.Postgres.User, config.Postgres.Password, config.Postgres.DB)
 	if err != nil {
 		log.Fatal(err)
 	}

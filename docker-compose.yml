@@ -1,0 +1,17 @@
+version: '3'
+services:
+  ursho:
+    restart: always
+    image: ursho
+    ports:
+      - 8080:8080
+    depends_on:
+      - app_postgres
+  app_postgres:
+    image: postgres
+    environment:
+      POSTGRES_PASSWORD: 'mypass'
+      POSTGRES_USER: 'ursho_db'
+      POSTGRES_DB: 'ursho_db'
+    ports:
+      - 5432:5432

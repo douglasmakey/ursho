@@ -18,6 +18,7 @@ type Config struct {
 	} `json:"redis"`
 	Postgres struct {
 		Host     string `json:"host"`
+		Port     string `json:"port"`
 		User     string `json:"user"`
 		Password string `json:"password"`
 		DB       string `json:"db"`

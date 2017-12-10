@@ -11,8 +11,10 @@
     "path": "/users/douglasmakey/ursho"
   },
   "postgres": {
-    "user": "postgres",
-    "password": "mysecretpassword",
+    "host": "app_postgres",
+    "port": "5432",
+    "user": "ursho_db",
+    "password": "mypass",
     "db": "ursho_db"
   }
 }

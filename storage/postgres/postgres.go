@@ -12,10 +12,11 @@ import (
 )
 
 // New returns a postgres backed storage service.
-func New(user, password, dbName string) (storage.Service, error) {
+func New(host, port, user, password, dbName string) (storage.Service, error) {
 	// Connect postgres
-	connect := fmt.Sprintf("user=%s password=%s dbname=%s sslmode=disable",
-		user, password, dbName)
+	connect := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=disable",
+		host, port, user, password, dbName)
+	fmt.Println(connect)
 	db, err := sql.Open("postgres", connect)
 	if err != nil {
 		return nil, err
