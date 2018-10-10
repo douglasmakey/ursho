@@ -2,13 +2,7 @@
 
 #### URL Shortener Service
 
-## Build and Run
-
-In this project we use two containers, the first one is to do the build and the second one to expose the binary of the project.
-
-```bash
-make build
-```
+## Run
 
 Run with Docker
 
@@ -17,14 +11,7 @@ docker-compose up
 ```
 
 ## Code Example
-
-```bash
-# execute the program
-go run main.go
-```
-
 Using CURL
-
 Generate shortener\
 `curl -H "Content-Type: application/json" -X POST -d '{"url":"www.google.com"}' http://localhost:8080/encode/`
 
