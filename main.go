@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
+	"syscall"
 
 	"github.com/douglasmakey/ursho/config"
 	"github.com/douglasmakey/ursho/handler"
@@ -34,15 +35,15 @@ func main() {
 
 	// Create a server
 	server := &http.Server{
-		Addr: fmt.Sprintf("%s:%s", config.Server.Host, config.Server.Port),
+		Addr:    fmt.Sprintf("%s:%s", config.Server.Host, config.Server.Port),
 		Handler: handler.New(config.Options.Prefix, svc),
-		}
+	}
 
 	// Check for a closing signal
 	go func() {
 		// Graceful shutdown
 		sigquit := make(chan os.Signal, 1)
-		signal.Notify(sigquit, os.Interrupt, os.Kill)
+		signal.Notify(sigquit, os.Interrupt, syscall.SIGTERM)
 
 		sig := <-sigquit
 		log.Printf("caught sig: %+v", sig)
