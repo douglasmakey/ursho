@@ -61,6 +61,10 @@ func (h handler) encode(w io.Writer, r *http.Request) (interface{}, int, error) 
 	if url == "" {
 		return nil, http.StatusBadRequest, fmt.Errorf("URL is empty")
 	}
+		
+	if !strings.Contains(url, "http") {
+		url = "http://" + url
+	}
 
 	c, err := h.storage.Save(url)
 	if err != nil {
