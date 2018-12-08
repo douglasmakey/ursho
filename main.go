@@ -43,7 +43,7 @@ func main() {
 		// Start server
 		log.Printf("Starting HTTP Server. Listening at %q", server.Addr)
 		if err := server.ListenAndServe(); err != http.ErrServerClosed {
-			log.Printf("%v", err)
+			log.Fatalf("%v", err)
 		} else {
 			log.Println("Server closed!")
 		}
