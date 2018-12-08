@@ -39,28 +39,28 @@ func main() {
 		Handler: handler.New(config.Options.Prefix, svc),
 	}
 
-	// Check for a closing signal
 	go func() {
-		// Graceful shutdown
-		sigquit := make(chan os.Signal, 1)
-		signal.Notify(sigquit, os.Interrupt, syscall.SIGTERM)
-
-		sig := <-sigquit
-		log.Printf("caught sig: %+v", sig)
-		log.Printf("Gracefully shutting down server...")
-
-		if err := server.Shutdown(context.Background()); err != nil {
-			log.Printf("Unable to shut down server: %v", err)
+		// Start server
+		log.Printf("Starting HTTP Server. Listening at %q", server.Addr)
+		if err := server.ListenAndServe(); err != http.ErrServerClosed {
+			log.Printf("%v", err)
 		} else {
-			log.Println("Server stopped")
+			log.Println("Server closed!")
 		}
 	}()
 
-	// Start server
-	log.Printf("Starting HTTP Server. Listening at %q", server.Addr)
-	if err := server.ListenAndServe(); err != http.ErrServerClosed {
-		log.Printf("%v", err)
+	// Check for a closing signal
+	// Graceful shutdown
+	sigquit := make(chan os.Signal, 1)
+	signal.Notify(sigquit, os.Interrupt, syscall.SIGTERM)
+
+	sig := <-sigquit
+	log.Printf("caught sig: %+v", sig)
+	log.Printf("Gracefully shutting down server...")
+
+	if err := server.Shutdown(context.Background()); err != nil {
+		log.Printf("Unable to shut down server: %v", err)
 	} else {
-		log.Println("Server closed!")
+		log.Println("Server stopped")
 	}
 }
