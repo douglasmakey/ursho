@@ -4,15 +4,15 @@ import (
 	"database/sql"
 	"fmt"
 
+	"github.com/douglasmakey/ursho"
+	"github.com/douglasmakey/ursho/internal/base62"
+
 	// This loads the postgres drivers.
 	_ "github.com/lib/pq"
-
-	"github.com/douglasmakey/ursho/internal/base62"
-	"github.com/douglasmakey/ursho/internal/storage"
 )
 
 // New returns a postgres backed storage service.
-func New(host, port, user, password, dbName string) (storage.Service, error) {
+func New(host, port, user, password, dbName string) (ursho.ItemService, error) {
 	// Connect postgres
 	connect := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=disable",
 		host, port, user, password, dbName)
@@ -64,13 +64,13 @@ func (p *postgres) Load(code string) (string, error) {
 	return url, nil
 }
 
-func (p *postgres) LoadInfo(code string) (*storage.Item, error) {
+func (p *postgres) LoadInfo(code string) (*ursho.Item, error) {
 	id, err := base62.Decode(code)
 	if err != nil {
 		return nil, err
 	}
 
-	var item storage.Item
+	var item ursho.Item
 	err = p.db.QueryRow("SELECT url, visited, count FROM shortener where uid=$1 limit 1", id).
 		Scan(&item.URL, &item.Visited, &item.Count)
 	if err != nil {

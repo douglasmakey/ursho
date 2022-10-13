@@ -4,13 +4,14 @@ import (
 	"database/sql"
 	"log"
 
+	"github.com/douglasmakey/ursho"
 	"github.com/douglasmakey/ursho/internal/base62"
-	"github.com/douglasmakey/ursho/internal/storage"
+
 	_ "github.com/mattn/go-sqlite3" // sqlite engine
 )
 
 // New returns a sqlite backed storage service.
-func New(FilePath string) (storage.Service, error) {
+func New(FilePath string) (ursho.ItemService, error) {
 	db, err := sql.Open("sqlite3", FilePath)
 	if err != nil {
 		log.Fatal(err)
@@ -75,7 +76,7 @@ func (s *sqlite3) Load(code string) (string, error) {
 	return item.URL, nil
 }
 
-func (s *sqlite3) LoadInfo(code string) (*storage.Item, error) {
+func (s *sqlite3) LoadInfo(code string) (*ursho.Item, error) {
 	db, err := sql.Open("sqlite3", s.filePath)
 	if err != nil {
 		log.Fatal(err)
@@ -86,7 +87,7 @@ func (s *sqlite3) LoadInfo(code string) (*storage.Item, error) {
 		return nil, err
 	}
 
-	var item storage.Item
+	var item ursho.Item
 	err = db.QueryRow("SELECT url, visited, count FROM shortener where uid=$1 limit 1", id).
 		Scan(&item.URL, &item.Visited, &item.Count)
 	if err != nil {

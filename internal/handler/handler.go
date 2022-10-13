@@ -9,11 +9,11 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/douglasmakey/ursho/internal/storage"
+	"github.com/douglasmakey/ursho"
 )
 
 // New returns an http handler for the url shortener.
-func New(prefix string, storage storage.Service) http.Handler {
+func New(prefix string, storage ursho.ItemService) http.Handler {
 	mux := http.NewServeMux()
 	h := handler{prefix, storage}
 	mux.HandleFunc("/encode/", responseHandler(h.encode))
@@ -29,7 +29,7 @@ type response struct {
 
 type handler struct {
 	prefix  string
-	storage storage.Service
+	storage ursho.ItemService
 }
 
 func responseHandler(h func(io.Writer, *http.Request) (interface{}, int, error)) http.HandlerFunc {
