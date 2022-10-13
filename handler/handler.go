@@ -54,7 +54,7 @@ func (h handler) encode(w io.Writer, r *http.Request) (interface{}, int, error) 
 
 	var input struct{ URL string }
 	if err := json.NewDecoder(r.Body).Decode(&input); err != nil {
-		return nil, http.StatusBadRequest, fmt.Errorf("Unable to decode JSON request body: %v", err)
+		return nil, http.StatusBadRequest, fmt.Errorf("unable to decode JSON request body: %v", err)
 	}
 
 	url := strings.TrimSpace(input.URL)
@@ -68,7 +68,7 @@ func (h handler) encode(w io.Writer, r *http.Request) (interface{}, int, error) 
 
 	c, err := h.storage.Save(url)
 	if err != nil {
-		return nil, http.StatusInternalServerError, fmt.Errorf("Could not store in database: %v", err)
+		return nil, http.StatusInternalServerError, fmt.Errorf("could not store in database: %v", err)
 	}
 
 	return h.prefix + c, http.StatusCreated, nil
@@ -76,7 +76,7 @@ func (h handler) encode(w io.Writer, r *http.Request) (interface{}, int, error) 
 
 func (h handler) decode(w io.Writer, r *http.Request) (interface{}, int, error) {
 	if r.Method != http.MethodGet {
-		return nil, http.StatusMethodNotAllowed, fmt.Errorf("Method %s not allowed", r.Method)
+		return nil, http.StatusMethodNotAllowed, fmt.Errorf("method %s not allowed", r.Method)
 	}
 
 	code := r.URL.Path[len("/info/"):]
@@ -103,5 +103,5 @@ func (h handler) redirect(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	http.Redirect(w, r, string(url), http.StatusMovedPermanently)
+	http.Redirect(w, r, url, http.StatusMovedPermanently)
 }
