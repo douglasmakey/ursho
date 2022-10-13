@@ -10,24 +10,23 @@ import (
 	"os/signal"
 	"syscall"
 
-	"github.com/douglasmakey/ursho/config"
-	"github.com/douglasmakey/ursho/handler"
-	"github.com/douglasmakey/ursho/storage/postgres"
+	"github.com/douglasmakey/ursho/internal/config"
+	"github.com/douglasmakey/ursho/internal/handler"
+	"github.com/douglasmakey/ursho/internal/storage/postgres"
 )
 
 func main() {
-	configPath := flag.String("config", "./config/config.json", "path of the config file")
-
+	configPath := flag.String("cfg", "config.json", "path of the cfg file")
 	flag.Parse()
 
 	// Read config
-	config, err := config.FromFile(*configPath)
+	cfg, err := config.FromFile(*configPath)
 	if err != nil {
 		log.Fatal(err)
 	}
 
 	// Set use storage, select [Postgres, Filesystem, Redis ...]
-	svc, err := postgres.New(config.Postgres.Host, config.Postgres.Port, config.Postgres.User, config.Postgres.Password, config.Postgres.DB)
+	svc, err := postgres.New(cfg.Postgres.Host, cfg.Postgres.Port, cfg.Postgres.User, cfg.Postgres.Password, cfg.Postgres.DB)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -35,8 +34,8 @@ func main() {
 
 	// Create a server
 	server := &http.Server{
-		Addr:    fmt.Sprintf("%s:%s", config.Server.Host, config.Server.Port),
-		Handler: handler.New(config.Options.Prefix, svc),
+		Addr:    fmt.Sprintf("%s:%s", cfg.Server.Host, cfg.Server.Port),
+		Handler: handler.New(cfg.Options.Prefix, svc),
 	}
 
 	go func() {

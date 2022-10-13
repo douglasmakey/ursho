@@ -4,8 +4,8 @@ import (
 	"database/sql"
 	"log"
 
-	"github.com/douglasmakey/ursho/base62"
-	"github.com/douglasmakey/ursho/storage"
+	"github.com/douglasmakey/ursho/internal/base62"
+	"github.com/douglasmakey/ursho/internal/storage"
 	_ "github.com/mattn/go-sqlite3" // sqlite engine
 )
 
@@ -52,7 +52,7 @@ func (s *sqlite3) Save(url string) (string, error) {
 	return base62.Encode(id), nil
 }
 
-func (s *sqlite3) Load(code string) (*storage.Item, error) {
+func (s *sqlite3) Load(code string) (string, error) {
 	db, err := sql.Open("sqlite3", s.filePath)
 	if err != nil {
 		log.Fatal(err)
@@ -60,19 +60,19 @@ func (s *sqlite3) Load(code string) (*storage.Item, error) {
 	defer db.Close()
 	id, err := base62.Decode(code)
 	if err != nil {
-		return nil, err
+		return "", err
 	}
 
 	item, err := s.LoadInfo(code)
 	if err != nil {
-		return nil, err
+		return "", err
 	}
 
 	_, err = db.Exec("update shortener set visited=$1, count=$2 where uid=$3", true, item.Count+1, id)
 	if err != nil {
-		return nil, err
+		return "", err
 	}
-	return item, nil
+	return item.URL, nil
 }
 
 func (s *sqlite3) LoadInfo(code string) (*storage.Item, error) {

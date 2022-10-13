@@ -7,8 +7,8 @@ import (
 	// This loads the postgres drivers.
 	_ "github.com/lib/pq"
 
-	"github.com/douglasmakey/ursho/base62"
-	"github.com/douglasmakey/ursho/storage"
+	"github.com/douglasmakey/ursho/internal/base62"
+	"github.com/douglasmakey/ursho/internal/storage"
 )
 
 // New returns a postgres backed storage service.

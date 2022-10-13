@@ -9,7 +9,7 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/douglasmakey/ursho/storage"
+	"github.com/douglasmakey/ursho/internal/storage"
 )
 
 // New returns an http handler for the url shortener.
@@ -61,7 +61,7 @@ func (h handler) encode(w io.Writer, r *http.Request) (interface{}, int, error) 
 	if url == "" {
 		return nil, http.StatusBadRequest, fmt.Errorf("URL is empty")
 	}
-		
+
 	if !strings.Contains(url, "http") {
 		url = "http://" + url
 	}
