@@ -2,7 +2,6 @@ package sqlite3
 
 import (
 	"database/sql"
-	"log"
 
 	"github.com/douglasmakey/ursho"
 	"github.com/douglasmakey/ursho/internal/base62"
@@ -10,13 +9,17 @@ import (
 	_ "github.com/mattn/go-sqlite3" // sqlite engine
 )
 
+type sqlite3 struct {
+	db *sql.DB
+}
+
 // New returns a sqlite backed storage service.
-func New(FilePath string) (ursho.ItemService, error) {
-	db, err := sql.Open("sqlite3", FilePath)
+func New(path string) (ursho.ItemService, error) {
+	db, err := sql.Open("sqlite3", path)
 	if err != nil {
-		log.Fatal(err)
+		return nil, err
 	}
-	defer db.Close()
+
 	// Create table if not exists
 	strQuery := "CREATE TABLE IF NOT EXISTS shortener (uid INTEGER PRIMARY KEY AUTOINCREMENT, url VARCHAR not NULL, " +
 		"visited boolean DEFAULT FALSE, count INTEGER DEFAULT 0);"
@@ -24,72 +27,55 @@ func New(FilePath string) (ursho.ItemService, error) {
 	if err != nil {
 		return nil, err
 	}
-	return &sqlite3{FilePath}, nil
-}
 
-type sqlite3 struct {
-	filePath string
+	return &sqlite3{db: db}, nil
 }
 
 func (s *sqlite3) Save(url string) (string, error) {
 	var id int64
-	db, err := sql.Open("sqlite3", s.filePath)
-	if err != nil {
-		log.Fatal(err)
-	}
-	defer db.Close()
-	stmt, err := db.Prepare("INSERT INTO shortener(url,visited,count) VALUES(?, ?, ?)")
 
+	stmt, err := s.db.Prepare("INSERT INTO shortener(url,visited,count) VALUES(?, ?, ?)")
 	if err != nil {
-		log.Fatal(err)
+		return "", err
 	}
 
 	res, err := stmt.Exec(url, 0, 0)
+	if err != nil {
+		return "", err
+	}
+
 	id, err = res.LastInsertId()
 	if err != nil {
-		log.Fatal(err)
+		return "", err
 	}
 
 	return base62.Encode(id), nil
 }
 
 func (s *sqlite3) Load(code string) (string, error) {
-	db, err := sql.Open("sqlite3", s.filePath)
-	if err != nil {
-		log.Fatal(err)
-	}
-	defer db.Close()
 	id, err := base62.Decode(code)
 	if err != nil {
 		return "", err
 	}
 
-	item, err := s.LoadInfo(code)
+	var url string
+	err = s.db.QueryRow("update shortener set visited=true, count = count + 1 where uid=$1 RETURNING url", id).Scan(&url)
 	if err != nil {
 		return "", err
 	}
 
-	_, err = db.Exec("update shortener set visited=$1, count=$2 where uid=$3", true, item.Count+1, id)
-	if err != nil {
-		return "", err
-	}
-	return item.URL, nil
+	return url, nil
 }
 
 func (s *sqlite3) LoadInfo(code string) (*ursho.Item, error) {
-	db, err := sql.Open("sqlite3", s.filePath)
-	if err != nil {
-		log.Fatal(err)
-	}
-	defer db.Close()
 	id, err := base62.Decode(code)
 	if err != nil {
 		return nil, err
 	}
 
 	var item ursho.Item
-	err = db.QueryRow("SELECT url, visited, count FROM shortener where uid=$1 limit 1", id).
-		Scan(&item.URL, &item.Visited, &item.Count)
+	query := "SELECT url, visited, count FROM shortener where uid=$1 limit 1"
+	err = s.db.QueryRow(query, id).Scan(&item.URL, &item.Visited, &item.Count)
 	if err != nil {
 		return nil, err
 	}
@@ -97,4 +83,4 @@ func (s *sqlite3) LoadInfo(code string) (*ursho.Item, error) {
 	return &item, nil
 }
 
-func (s *sqlite3) Close() error { return nil }
+func (s *sqlite3) Close() error { return s.db.Close() }
