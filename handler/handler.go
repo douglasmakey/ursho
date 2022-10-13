@@ -98,8 +98,14 @@ func (h handler) redirect(w http.ResponseWriter, r *http.Request) {
 
 	url, err := h.storage.Load(code)
 	if err != nil {
-		w.WriteHeader(http.StatusNotFound)
-		w.Write([]byte("URL Not Found"))
+		data, err := ioutil.ReadFile("frontend/index.html")
+		if err != nil {
+			w.WriteHeader(http.StatusInternalServerError)
+			w.Write([]byte("Internal Server Error."))
+			return
+		}
+		w.WriteHeader(http.StatusOK)
+		w.Write(data)
 		return
 	}
 
