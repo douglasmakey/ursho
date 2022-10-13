@@ -16,5 +16,8 @@
     "user": "ursho_db",
     "password": "mypass",
     "db": "ursho_db"
+  },
+  "sqlite": {
+    "filepath": "/users/douglasmakey/ursho/ursho.db"
   }
 }
