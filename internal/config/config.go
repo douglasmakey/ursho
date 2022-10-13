@@ -2,7 +2,7 @@ package config
 
 import (
 	"encoding/json"
-	"io/ioutil"
+	"os"
 )
 
 // Config contains the configuration of the url shortener.
@@ -33,7 +33,7 @@ type Config struct {
 
 // FromFile returns a configuration parsed from the given file.
 func FromFile(path string) (*Config, error) {
-	b, err := ioutil.ReadFile(path)
+	b, err := os.ReadFile(path)
 	if err != nil {
 		return nil, err
 	}
